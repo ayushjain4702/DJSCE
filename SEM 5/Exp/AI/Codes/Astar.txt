@@ -1,0 +1,171 @@
+vertex = {}
+weights = {}
+hfn = {}
+gfn = {}
+
+
+def make_graph():
+
+    vertices = set()
+    while True:
+        x = input("\nEnter edge: ")
+
+        if x == "END":
+            for y in vertices:
+                if y not in vertex.keys():
+                    vertex[y] = []
+            print("\nGraph:", vertex)
+            return
+
+        a = int(x.split(" ")[0])
+        b = int(x.split(" ")[1])
+
+        vertices.add(a)
+        vertices.add(b)
+
+        if a in vertex.keys():
+            vertex[a].append(b)
+        else:
+            vertex[a] = [b]
+
+        if b in vertex.keys():
+            vertex[b].append(a)
+        else:
+            vertex[b] = [a]
+
+        if a not in hfn.keys():
+            hfn[a] = int(input(f"Enter h({a}): "))
+            weights[str(a) + "-" + str(a)] = 0
+
+        if b not in hfn.keys():
+            hfn[b] = int(input(f"Enter h({b}): "))
+            weights[str(b) + "-" + str(b)] = 0
+
+        edge_weight = int(input(f"Enter gfn({a} -> {b}): "))
+        weights[str(a) + "-" + str(b)] = edge_weight
+        weights[str(b) + "-" + str(a)] = edge_weight
+
+
+def A_Star(start: int, target: int):
+    closed_list = set()
+    open_list = [start]
+    path = []
+    parent = {}
+    print("\nExecution: ")
+
+    curr_node = start
+    gfn[start] = 0
+
+    while len(open_list) > 0:
+        path.append(curr_node)
+        closed_list.add(curr_node)
+        open_list.remove(curr_node)
+
+        if curr_node == target:
+            print(f"\nTarget reached: {target}")
+
+            total_cost = 0
+            shortest_path = []
+            curr_parent = curr_node
+
+            while True:
+                if curr_parent in parent.keys():
+                    shortest_path.append(parent[curr_parent])
+                    total_cost += weights[
+                        str(parent[curr_parent]) + "-" + str(curr_parent)
+                    ]
+                    curr_parent = parent[curr_parent]
+                else:
+                    break
+
+            print("\nShortest Path: ", end="")
+            [print(str(x) + " -> ", end="") for x in reversed(shortest_path)]
+            print(target)
+            print("\nCost of Traversal: ", total_cost)
+            return
+
+        for node in vertex[curr_node]:
+            if node not in closed_list:
+                if node not in open_list:
+                    open_list.append(node)
+
+                if node in gfn.keys():
+                    new_gfn = gfn[curr_node] + weights[str(curr_node) + "-" + str(node)]
+                    if gfn[node] > new_gfn:
+                        gfn[node] = new_gfn
+                        parent[node] = curr_node
+                else:
+                    gfn[node] = (
+                        gfn[curr_node] + weights[str(curr_node) + "-" + str(node)]
+                    )
+                    parent[node] = curr_node
+
+        next_node = None
+
+        for node in open_list:
+            if node not in closed_list:
+                if next_node is not None:
+                    next_node = (
+                        node
+                        if gfn[node] + hfn[node] < gfn[next_node] + hfn[next_node]
+                        else next_node
+                    )
+                else:
+                    next_node = node
+
+        print(
+            "Current Node: ",
+            curr_node,
+            "\tOpen List:",
+            open_list,
+            "\t" if len(open_list) < 2 else "",
+            "\t" if len(open_list) < 4 else "",
+            "Closed List:",
+            list(closed_list),
+            "\t" if len(list(closed_list)) < 3 else "",
+            "\t" if len(list(closed_list)) < 6 else "",
+            "\tPath:",
+            path,
+        )
+        curr_node = next_node
+
+    print("\nTarget not reached")
+
+
+if __name__ == "__main__":
+    make_graph()
+
+    start = int(input("\nEnter start node: "))
+    target = int(input("Enter target node: "))
+
+    A_Star(start, target)
+
+# 0 1
+# 15
+# 14
+# 3
+# 0 4
+# 12
+# 4
+# 1 4
+# 5
+# 1 2
+# 10
+# 4
+# 4 5
+# 10
+# 2
+# 2 5
+# 5
+# 2 3
+# 8
+# 4
+# 5 6
+# 10
+# 4
+# 6 7
+# 0
+# 3
+# END
+# 0
+# 7

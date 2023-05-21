@@ -1,0 +1,105 @@
+def pattern_classifier(n_iterations, input, weight, desired_output, learning_rate):
+    for iteration in range(n_iterations):
+        print(f"\nIteration {iteration+1}")
+        output = []
+        for i, X in enumerate(input):
+            net_input = 0
+            for j in range(len(X)):
+                net_input += weight[j] * X[j]
+            generated_output = sgn(net_input)
+            output.append(generated_output)
+            if generated_output != desired_output[i]:
+                difference = desired_output[i] - generated_output
+                for position in range(len(weight)):
+                    weight[position] = float(
+                        "{:.2f}".format(
+                            weight[position] + learning_rate * difference * X[position]
+                        )
+                    )
+        print(f"Output vector for Iteration {iteration+1} : {output}")
+        print(f"Updated Weight vector after Iteration {iteration+1} : {weight}")
+        if output == desired_output:
+            break
+    return output, weight
+
+
+def sgn(net_input):
+    if net_input <= 0:
+        return -1
+    return 1
+
+
+def main():
+    input = [
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1],  # M
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1],  # M
+        [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1],  # L
+        [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1],  # M
+        [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1],  # L
+        [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1],  # M
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1],  # M
+        [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1],  # M
+        [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1],  # L
+        [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1],  # M
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0],  # M
+        [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1],  # L
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1],  # M
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1],  # L
+        [0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1],  # M
+    ]
+    desired_output = [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+    ]
+    initial_weight = [1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1]
+    learning_rate = 0.01
+    n_iterations = 5
+
+    classification_output, weight_vector = pattern_classifier(
+        n_iterations, input, initial_weight, desired_output, learning_rate
+    )
+
+    count = 0
+    for i, output in enumerate(classification_output):
+        if output == desired_output[i]:
+            count += 1
+
+    accuracy = (count / len(input)) * 100
+
+    print(f"Accuracy of Classification : {accuracy}")
+
+    print("\nClassifying an Unknown Sample of L (Output = 1)")
+    unknown_sample = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]
+    print("Unknown Sample : ", unknown_sample)
+    net_input = 0
+    for i in range(len(unknown_sample)):
+        net_input += weight_vector[i] * unknown_sample[i]
+    predicted_output = sgn(net_input)
+    print("\nPredicted Output : ", predicted_output)
+
+
+if __name__ == "__main__":
+    main()
