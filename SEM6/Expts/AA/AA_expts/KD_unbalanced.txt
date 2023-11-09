@@ -1,0 +1,24 @@
+class KDTree:
+    def __init__(self,P,d=0):
+        self.val = None
+        self.left = None
+        self.right = None
+        if len(P)>0:
+            self.val = P[0]
+            k = len(P[0])
+            curr = d%k
+            d+=1
+            self.left = KDTree([i for i in P[1:] if i[curr]<=P[0][curr]],d)
+            self.right = KDTree([i for i in P[1:] if i[curr]>P[0][curr]],d)
+    def preOrder(self):
+        if self.val != None:
+            print(self.val,end=" ")
+        if self.left!=None:
+            self.left.preOrder()
+        if self.right!=None:
+            self.right.preOrder()
+
+P = [(6,2),(7,1),(2,9),(3,6),(4,8),(8,4),(5,3),(1,5),(9,5)]
+
+root = KDTree(P)
+root.preOrder()

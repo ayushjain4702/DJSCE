@@ -1,0 +1,19 @@
+import random
+candidates = [1,2,3,4,5,6,7,8,9,10]
+interview_order = []
+hiring_order = []
+
+for i in range(len(candidates)):
+    select = random.choice(candidates)
+    interview_order.append(select)
+    candidates.remove(select)
+best = -1
+for i in interview_order:
+    if i>best:
+        best=i
+        hiring_order.append(i)
+        
+print("candidates for interview: ",interview_order)
+print("Hired Candidates: ",hiring_order)
+print("hiring cost: ",len(hiring_order))
+print("Firing cost: ",len(hiring_order)-1)

@@ -1,0 +1,61 @@
+class KDTree:
+    def __init__(self,P,d=0):
+        self.val = None
+        self.left = None
+        self.right = None
+        if len(P)>0:
+            self.val = P[0]
+            k = len(P[0])
+            curr = d%k
+            d+=1
+            # Extra Code for Balanced
+            P.sort(key= lambda x:x[curr])
+            mid = len(P)//2
+            self.val = P[mid]
+            self.left = KDTree(P[:mid],d)
+            self.right = KDTree(P[mid+1:],d)
+    def preOrder(self):
+        if self.val != None:
+            print(self.val,end=" ")
+        if self.left!=None:
+            self.left.preOrder()
+        if self.right!=None:
+            self.right.preOrder()
+
+P = [(6,2),(7,1),(2,9),(3,6),(4,8),(8,4),(5,3),(1,5),(9,5)]
+root = KDTree(P)
+root.preOrder()
+
+
+//////////////////////////////////////
+class KDTree:
+    def __init__(self,P,d=0):
+        if not P:
+            self.left = None
+            self.right = None
+            self.point=None
+        else:
+            n = len(P)
+            m=n//2
+            P.sort(key = lambda x:x[d])
+            self.point = P[m]
+            self.left = None
+            self.right = None
+            d = (d+1)%len(P[0])
+
+            self.left = KDTree(P[:m], d)
+            self.right = KDTree(P[m+1:],d)
+
+    def print_kdtree(self,node=None, ch='A', d=0):
+        if not node:
+            node = self
+        if not node.point:
+            return 
+
+        print(ch,":",node.point)
+        self.print_kdtree(node = node.left ,ch=ch+'L' ,d=d+1)
+        self.print_kdtree(node = node.right, ch=ch+'R', d=d+1)
+
+P = [(6,2),(7,1),(2,9),(3,6),(4,8),(8,4),(5,3),(1,5),(9,5)]
+tree= KDTree(P)
+tree.print_kdtree()

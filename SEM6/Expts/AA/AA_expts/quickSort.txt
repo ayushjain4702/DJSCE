@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+void swap(int *a,int *b){
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int arr[],int low,int high,int &comparisons){
+    int pivot = arr[high];
+    int i= low-1;
+    for(int j=low;j<=high-1;j++){
+
+        if(arr[j]<=pivot){
+            comparisons++;
+            i++;
+            swap(&arr[i],&arr[j]);
+        }
+    }
+    swap(&arr[i+1],&arr[high]);
+    return (i+1);
+}
+
+void quickSort(int arr[],int low,int high,int &qcomp){
+    if(low < high){
+        int pi = partition(arr,low,high,qcomp);
+        
+        
+        quickSort(arr,low,pi-1,qcomp);
+        quickSort(arr,pi+1,high,qcomp);
+    }
+    
+}
+
+void randomized_quickSort(int arr[],int low,int high,int &rcomp){
+    if(low<high){
+        srand(time(NULL));
+        int random = low+ rand()%(high-low);
+        swap(&arr[random],&arr[high]);
+
+        int pi = partition(arr,low,high,rcomp);
+        randomized_quickSort(arr,low,pi-1,rcomp);
+        randomized_quickSort(arr,pi+1,high,rcomp);
+    }
+}
+
+void printArray(int arr[],int n){
+    for(int i=0;i<n;i++){
+        cout<<arr[i]<<" ";
+    }
+    cout<<endl;
+}
+
+int main(){
+
+    int arr1[] = {1,2,3,4,5,6,7,8,9,10};
+    int arr2[] = {1,2,3,4,5,6,7,8,9,10};
+    int n = sizeof(arr1)/sizeof(arr1[0]);
+    int m = sizeof(arr2)/sizeof(arr2[0]);
+    cout<<"Original Array: ";
+    printArray(arr1,n);
+
+    //for normal quick sort
+    int qcomp = 0;
+    quickSort(arr1,0,n-1,qcomp);
+    cout<<"Sorted array through quick sort: ";
+    printArray(arr1,n);
+    cout<<"Number of comparisons in quick sort: "<<qcomp<<endl;
+
+    //for randomized quick sort
+    int rcomp = 0;
+    randomized_quickSort(arr2,0,m-1,rcomp);
+    cout<<"Sorted array through randomized quick sort: ";
+    printArray(arr2,n);
+    cout<<"Number of comparisons in randomized quick sort: "<<rcomp<<endl;
+
+    return 0;
+}
