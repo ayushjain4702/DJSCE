@@ -1,0 +1,34 @@
+def gcd(a , b):
+    while b != 0:
+        a , b = b , a % b
+    return a
+
+
+def encryption(pk , pt):
+    e , n = pk
+    return pow(pt,e,n)
+
+
+def decryption(pk , ct):
+    d , n = pk
+    return pow(ct,d,n)
+
+
+p = int(input("Enter large prime number : "))
+q = int(input("Enter large prime number : "))
+n = p * q
+phi = (p - 1)*(q - 1)
+e = 2
+while gcd(e , phi) != 1:
+    e += 1
+
+d = pow(e , -1,phi)
+public_key = (e,n)
+private_key = (d,n)
+
+plain_text = int(input("Enter plain text :"))
+
+ct = encryption(public_key , plain_text)
+print(ct)
+pt = decryption(private_key , ct)
+print(pt)

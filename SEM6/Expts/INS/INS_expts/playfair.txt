@@ -1,0 +1,106 @@
+alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm',
+        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+
+def get_position(letter , matrix):
+    for i in range(5):
+        for j in range(5):
+            if matrix[i][j] == letter:
+                return i ,j
+       
+def digraphs(plain_text):
+    text = []
+    i = 0
+    j = 1
+    n = len(plain_text)
+    while i < n and j < n:
+        if plain_text[i] != plain_text[j]:
+            text.append([plain_text[i], plain_text[j]])
+            i += 2
+            j += 2
+        else:
+            text.append([plain_text[i],"x"])
+            i += 1
+            j += 1
+    if i < n:
+        text.append([plain_text[i],"x"])
+    return text
+
+
+def encrypt(matrix , text):
+
+
+    encrypted_text = ""
+    print(text)
+    for i in range(len(text)):
+        x1 , y1 = get_position(text[i][0]  , matrix)
+        x2 , y2 = get_position(text[i][1] , matrix)
+
+
+        if x1 == x2:
+            # same row
+            encrypted_text += matrix[x1][(y1+1)%5]
+            encrypted_text += matrix[x2][(y2+1)%5]            
+        elif y1 == y2:
+            # same column
+            encrypted_text += matrix[(x1+1)%5][y1]
+            encrypted_text += matrix[(x2+1)%5][y2]      
+        else:
+            # intersection
+            encrypted_text += matrix[x1][y2]
+            encrypted_text += matrix[x2][y1]
+    return encrypted_text
+
+def decrypt(matrix , text):
+    encrypted_text = ""
+    print(text)
+    for i in range(len(text)):
+        x1 , y1 = get_position(text[i][0]  , matrix)
+        x2 , y2 = get_position(text[i][1] , matrix)
+
+
+        if x1 == x2:
+            # same row
+            encrypted_text += matrix[x1][(y1-1)%5]
+            encrypted_text += matrix[x2][(y2-1)%5]            
+        elif y1 == y2:
+            # same column
+            encrypted_text += matrix[(x1-1)%5][y1]
+            encrypted_text += matrix[(x2-1)%5][y2]      
+        else:
+            # intersection
+            encrypted_text += matrix[x1][y2]
+            encrypted_text += matrix[x2][y1]
+    return encrypted_text
+   
+
+def generate_matrix(key):
+    temp_list = []
+    for i in key:
+        if i not in temp_list:
+            temp_list.append(i)
+    for i in alphabets:
+        if i not in temp_list:
+            temp_list.append(i)
+
+
+    matrix = []
+    for i in range(5):
+        matrix.append(temp_list[:5])
+        temp_list = temp_list[5:]
+
+
+    return matrix
+
+if __name__ == "__main__":
+    key = input("Enter the key : ")
+    plain_text = input("Enter plain text : ")
+    matrix = generate_matrix(key)
+    print()
+    digraphs_text = digraphs(plain_text)
+    cipher_text = encrypt(matrix , digraphs_text)
+    print()
+    print("Encrypted text : ",cipher_text)
+    print()
+    c_digraphs_text = digraphs(cipher_text)
+    print("\nPlain text : ",decrypt(matrix , c_digraphs_text))

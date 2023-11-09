@@ -1,0 +1,44 @@
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.backends import default_backend
+from os import urandom
+
+def generate_key():
+    return urandom(16)  # Generate a 128-bit (16-byte) random key
+
+def generate_iv():
+    return urandom(16)  # Generate a random initialization vector
+
+def cbc_encrypt(key, iv, plaintext):
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    padder = padding.PKCS7(128).padder()
+
+    padded_data = padder.update(plaintext) + padder.finalize()
+    ciphertext = encryptor.update(padded_data) + encryptor.finalize()
+
+    return ciphertext
+
+def cbc_decrypt(key, iv, ciphertext):
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+    unpadder = padding.PKCS7(128).unpadder()
+
+    padded_data = decryptor.update(ciphertext) + decryptor.finalize()
+    decrypted_data = unpadder.update(padded_data) + unpadder.finalize()
+
+    return decrypted_data
+
+# Example usage
+key = generate_key()
+iv = generate_iv()
+message = b"Hello, CBC!"
+
+
+# Encryption
+encrypted_message = cbc_encrypt(key, iv, message)
+print("Encrypted:", encrypted_message)
+
+# Decryption
+decrypted_message = cbc_decrypt(key, iv, encrypted_message)
+print("Decrypted:", decrypted_message.decode())

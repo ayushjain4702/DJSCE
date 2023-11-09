@@ -1,0 +1,20 @@
+p = int(input('Enter value of p: '))#23
+g = int(input('Enter value of q: '))#9
+
+
+a = int(input('Enter value of a: '))#4
+b = int(input('Enter value of b: '))#3
+x = int(pow(g,a,p))
+
+
+y = int(pow(g,b,p))
+ka = int(pow(y,a,p))
+kb = int(pow(x,b,p))
+if ka==kb:
+    print('Done!')
+else:
+    print('Failed!')
+
+
+print('Secret key for the John is :' ,ka)
+print('Secret key for the Tom is :' ,kb)

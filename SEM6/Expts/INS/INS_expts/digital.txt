@@ -1,0 +1,70 @@
+import hashlib
+def gcd(a , b):
+    while b != 0:
+        a , b = b , a % b
+    return a
+
+
+def get_keys():
+    p = int(input("Enter value of p : "))
+    q = int(input("Enter value of q : "))
+    n = p * q
+    phi = (p-1)*(q-1)
+    e = 2
+    while gcd(e , phi) != 1:
+        e += 1
+
+
+    d = pow(e,-1,phi)
+
+
+    return [(e,n) , (d,n)]
+
+
+def encrypt(key , pt):
+    a , b = key
+    cipher = [pow(ord(char),a,b) for char in pt]
+    return cipher
+
+
+
+
+def decryption(key , ct):
+    a , b = key
+    plain = [chr(pow(char , a,b)) for char in ct]
+    return "".join(plain)
+
+
+if __name__ == "__main__":
+    sender_keys = get_keys()
+    receiver_key = get_keys()
+
+
+    # sender side
+    plain_text = input("Enter plain text : ")
+    ct = encrypt(receiver_key[0] , plain_text)
+    hasher = hashlib.sha256()
+
+
+    str_num = str(plain_text).encode("utf-8")
+    hasher.update(str_num)
+    digest = hasher.hexdigest()
+    print("Digest calculated at sender side : ",digest)
+
+
+    c_digest = encrypt(sender_keys[1] , digest)
+
+
+    # receiver side
+    plain_text_2 = decryption(receiver_key[1] , ct)
+    print("Received Plain text : ",plain_text_2)
+
+
+    str_num2 = str(plain_text_2).encode("utf-8")
+    hasher2 = hashlib.sha256()
+    hasher2.update(str_num2)
+    digest2 = hasher2.hexdigest()
+    print("Digest calculated at receiver side : ",digest2)
+    digest = decryption(sender_keys[0] , c_digest)
+    if digest == digest2:
+        print("Message received is verified")

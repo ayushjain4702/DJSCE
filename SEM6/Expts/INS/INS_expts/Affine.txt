@@ -1,0 +1,35 @@
+def get_index(c):
+    return ord(c.lower()) - 97
+
+def get_char(n):
+    return chr(n+97)
+
+def encryption(text,a,b):
+    # (ax+b) mod 26
+    cipher = ""
+    for i in text:
+        temp = get_index(i)
+        temp = (a*temp + b) % 26
+        cipher += get_char(temp)
+
+    return cipher
+
+def decryption(text,a,b):
+    # c*(x-b) mod 26
+    c = pow(a , -1,26)
+    pt = ""
+    for i in text:
+        temp = get_index(i)
+        temp = c*(temp - b) % 26
+        pt += get_char(temp)
+
+    return pt
+   
+if __name__ == "__main__":
+    text = input("Enter plain text : ")
+    a = int(input("Enter value of a : "))
+    b = int(input("Enter valur of b : "))
+    ct = encryption(text , a , b)
+    print(ct)
+    pt = decryption(ct , a,b)
+    print(pt)

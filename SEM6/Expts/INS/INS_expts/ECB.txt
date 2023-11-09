@@ -1,0 +1,69 @@
+def lhs(l): 
+    temp = [] 
+    t = 2 
+    for i in range(len(l)-t): 
+        temp.append(l[i+t]) 
+    temp.extend(l[0:t]) 
+    print(temp) 
+    ct.extend(temp) 
+     
+def rhs(l): 
+    temp = [] 
+    t = 2 
+    for i in range(len(l)): 
+        temp.append(l[i-t]) 
+    pt.extend(temp) 
+    
+para = input("Enter para: ") 
+para = para.upper() 
+ascii = "" 
+binary = "" 
+for i in para: 
+    ascii = ascii+str(ord(i)) 
+ascii = int(ascii) 
+binary = bin(ascii) 
+binary = binary[2:] 
+print("Ascii value: ", ascii) 
+print("Binary value: ", binary) 
+print("Encrpted paragraph is: ") 
+pos = 0 
+i = 0 
+block = [] 
+ct = [] 
+pt = [] 
+while binary and pos < len(binary): 
+    while i < 128 and pos < len(binary): 
+        block.append(binary[pos]) 
+        pos = pos+1 
+        if pos % 128 == 0: 
+            lhs(block) 
+            block = [] 
+            i = 0 
+            continue 
+lhs(block) 
+block = [] 
+pos = 0 
+i = 0 
+
+
+while ct and pos < len(ct): 
+    while i < 128 and pos < len(ct): 
+        block.append(ct[pos]) 
+        pos = pos+1 
+        if pos % 128 == 0: 
+            rhs(block) 
+            block = [] 
+            i = 0 
+            continue 
+rhs(block) 
+plaintext = "" 
+for i in pt: 
+    plaintext = plaintext+i 
+ascii = int(plaintext, 2) 
+ascii = str(ascii) 
+i = 0 
+ans = "" 
+while i < len(ascii): 
+    ans = ans+chr(int(ascii[i]+ascii[i+1])) 
+    i = i+2 
+print("\nDecrypted Text is:", ans) 
